@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html id="primary-content">
+<head>
+  <title>Workspace</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://code.getmdl.io/1.1.3/material.indigo-pink.min.css">
+  <script defer src="https://code.getmdl.io/1.1.3/material.min.js"></script>
+  <!-- Latest compiled and minified CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+  <!-- Optional theme -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+  <!-- Latest compiled and minified JavaScript -->
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+  <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
+  <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
+  <%= csrf_meta_tags %>
+  
+  <style type="text/css">
+    #page-background {position:fixed; top:0; left:0; width:100%; height:100%;}
+    #image {top:0; left:0; width:100%; height:100%;}
+    #content {position:relative; z-index:1; padding:10px;}
+    .footer {
+      position:fixed;
+      bottom:0;
+      left:0;
+      color: white;
+      width:100%;
+      padding: 20px;
+      padding-top: 200px;
+      background:lightgray;
+    	background: -webkit-gradient(linear, center top, center bottom, from(rgba(0,0,0,0)), to(rgba(0,0,0,0.8)));
+    	background: -moz-linear-gradient(top, rgba(0,0,0,0) 0%, rgba(0,0,0,0.8) 100%);
+    	background: -webkit-linear-gradient(top, rgba(0,0,0,0) 0%,rgba(0,0,0,0.8) 100%);
+    	background: -ms-linear-gradient(top, rgba(0,0,0,0) 0%,rgba(0,0,0,0.8) 100%);
+    }
+  </style>
+  <script>
+    document.addEventListener('page:change', function() {
+        document.getElementById('primary-content').className += 'animated fadeIn';
+    });
+    document.addEventListener('page:fetch', function() {
+            document.getElementById('primary-content').className += 'animated fadeOut';
+    });
+  </script>
+</head>
+<body style="background: url(<%= @story.image%>) no-repeat center center fixed;-webkit-background-size: cover;-moz-background-size: cover;-o-background-size: cover;background-size: cover;">
+
+<footer class="mdl-mini-footer footer">
+  <div class="container">
+    <div class="row">
+      <%=form_tag "/play/story", method: "post" do%>
+        <div class="col-md-9">
+          <input type="hidden" name="next_id" value="<%= @story.next_id %>">
+          <p style="font-size:20px;font-weight: bold;"><%= @story.speaker %></p><p><%= simple_format(@story.content) %></p>
+        </div>
+        <div class="col-md-3">
+          <% if !@story.question %>
+            <div class="text-center"><button class="btn btn-lg" href="#" role="button">다음</button></div>
+          <% end %>
+        </div>
+      <% end %>
+      
+      <% if @story.question %>
+        <% @story.question.choices.each do |x,y|%>
+          <%=form_tag "/play/story", method: "post" do%>
+            <input type="hidden" name="next_id" value="<%=y['next_story_id']%>">
+            <div class="col-lg-12"><button class="btn btn-defalut" href="#" style="font-size: 20px;font-weight: bold;"><%= y['contnt']%></button></div>
+          <% end %>
+        <% end %>
+      <% end %>
+      
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
